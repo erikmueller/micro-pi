@@ -1,5 +1,7 @@
 import {send} from 'micro-core'
 import {readFile} from 'fs'
+import {rawToArray, toChartData} from './utils/format'
+import * as filter from './utils/filter'
 
 const readFileAsync = (file) => new Promise((resolve, reject) => readFile(file, (err, data) => {
     if (err) return reject(err)
@@ -8,36 +10,17 @@ const readFileAsync = (file) => new Promise((resolve, reject) => readFile(file, 
 }))
 const isStaticAsset = new RegExp(/.*[\.js\.tag\.html]$/)
 const serveStatic = async (path) => readFileAsync(`${__dirname}/public/${path}`)
-const dummyData = {
-    chart: {
-        type: 'doughnut', // line|bar|radar|polar|pie|doughnut
-        options: {}, // Look at Chart.js documentation on how to populate data and options
-        data: [{
-          value: 300,
-          color: "#F7464A",
-          highlight: "#FF5A5E",
-          label: "Red"
-        }, {
-          value: 50,
-          color: "#46BFBD",
-          highlight: "#5AD3D1",
-          label: "Green"
-        }, {
-          value: 100,
-          color: "#FDB45C",
-          highlight: "#FFC870",
-          label: "Yellow"
-        }]
-    }
-}
 
 export default async function (req, res) {
     if (req.url.match(isStaticAsset)) {
-        console.log(req.url)
         return send(res, 200, await serveStatic(req.url))
     }
 
     const tmpl = await serveStatic('index.html')
+    const completeData = rawToArray(await readFileAsync(`${__dirname}/sensor_data`))
+    const lastDayData = filter.lastDay(completeData)
 
-    return send(res, 200, tmpl.replace('window.__data__', JSON.stringify(dummyData)))
+    const data = toChartData(lastDayData)
+
+    return send(res, 200, tmpl.replace(/window.__data__/g, JSON.stringify(data)))
 }

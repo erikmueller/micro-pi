@@ -6,15 +6,13 @@
   "scripts": {
     "start": "micro -p 3000 index.js",
     "prestart": "npm run dist",
-    "dist": "mkdir -p ./public/vendor && cp node_modules/riot/riot+compiler.min.js ./public/vendor && cp node_modules/chart.js/Chart.min.js ./public/vendor && cp node_modules/riotgear/dist/rg.min.js ./public/vendor",
+    "dist": "mkdir -p ./public/vendor && cp node_modules/chart.js/dist/Chart.bundle.min.js $_",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "chart.js": "1.0.2",
-    "micro": "2.1.0",
-    "riot": "2.3.18",
-    "riotgear": "3.5.0"
+    "chart.js": "2.1.1",
+    "micro": "2.1.0"
   }
 }

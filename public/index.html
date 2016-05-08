@@ -2,13 +2,54 @@
     <head>
     </head>
     <body>
-        <rg-chart></rg-chart>
+        <canvas id="chart" width="400" height="400"></canvas>
     </body>
-    <script src="vendor/riot+compiler.min.js"></script>
-    <script src="vendor/Chart.min.js"></script>
-    <script src="vendor/rg.min.js"></script>
+    <script src="vendor/Chart.bundle.min.js"></script>
     <script>
-        riot.mount('rg-chart', window.__data__)
+        var ctx = document.getElementById("chart");
+        var chart = new Chart(ctx, {
+            type: 'line',
+            options: {
+                elements: {
+                    point: {
+                        radius: 1
+                    }
+                },
+                responsive: true,
+                scales: {
+                    xAxes: [{
+                        gridLines: {
+                            display: false
+                        }
+                    }],
+                    yAxes: [
+                        {
+                            gridLines: {
+                                display: false
+                            },
+                            type: 'linear',
+                            id: 'temp',
+                            position: 'left',
+                            ticks: {
+                                min: 22,
+                                max: 40,
+                                callback: (val) => val + '\u2103'
+                            }
+                        },
+                        {
+                            type: 'logarithmic',
+                            id: 'hum',
+                            position: 'right',
+                            ticks: {
+                                min: 25,
+                                stepSize: 2,
+                                callback: (val) => val + '%'
+                            }
+                        }
+                    ]
+                }
+            },
+            data: window.__data__
+        })
     </script>
-
 </html>
